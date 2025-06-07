@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Мини-приложение Telegram</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram WebApp</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
+            max-width: 600px;
+            margin: 0 auto;
             padding: 20px;
             background-color: #f5f5f5;
         }
         .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
+            background-color: white;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0088cc;
+            text-align: center;
         }
         button {
             background-color: #0088cc;
@@ -27,47 +29,50 @@
             padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
-            margin: 10px 0;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #006699;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Мое мини-приложение</h1>
-        <p>Привет, <span id="user-name">Гость</span>!</p>
-
-        <div>
-            <button id="send-btn">Отправить данные боту</button>
-            <button id="close-btn">Закрыть WebApp</button>
-        </div>
+        <p>Это простое мини-приложение для Telegram.</p>
+        
+        <button onclick="sendData()">Отправить данные в бота</button>
+        
+        <div id="result"></div>
     </div>
 
     <script>
         // Инициализация Telegram WebApp
-        const tg = window.Telegram.WebApp;
-
-        // Показываем информацию о пользователе
-        document.getElementById('user-name').textContent =
-            tg.initDataUnsafe.user?.first_name || 'Гость';
-
-        // Показываем кнопку "Назад"
-        tg.BackButton.show();
-        tg.BackButton.onClick(() => tg.close());
-
-        // Обработчики кнопок
-        document.getElementById('send-btn').addEventListener('click', () => {
-            const data = {
+        Telegram.WebApp.ready();
+        
+        function sendData() {
+            // Отправляем данные в бота через Telegram WebApp
+            Telegram.WebApp.sendData(JSON.stringify({
                 action: 'button_click',
-                timestamp: new Date().toISOString(),
-                user: tg.initDataUnsafe.user?.first_name
-            };
-
-            tg.sendData(JSON.stringify(data));
-        });
-
-        document.getElementById('close-btn').addEventListener('click', () => {
-            tg.close();
-        });
+                message: 'Привет из мини-приложения!'
+            }));
+            
+            // Показываем результат пользователю
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('result').innerHTML = '<p>Данные отправлены в бота!</p>';
+            
+            // Закрываем мини-приложение через 2 секунды
+            setTimeout(() => {
+                Telegram.WebApp.close();
+            }, 2000);
+        }
     </script>
 </body>
-</html>
+</html>\
